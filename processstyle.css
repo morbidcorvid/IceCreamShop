@@ -1,0 +1,15 @@
+th {
+	background-color: #AAAAB6;
+}
+
+.item {
+	background-color: #D4D4E3;
+}
+
+.extra{
+	background-color: #EEEEF0;
+}
+
+.extra :first-child {
+    padding-left: 20px;
+}

@@ -1,10 +1,8 @@
-<!DOCTYPE html>
-<html>
-<body>
-
 <?php
-echo "My first PHP script!";
-?>  
+ini_set('display_errors',1);  error_reporting(E_ALL);
 
-</body>
-</html>
+include_once 'MVC/Controller/controller.php';
+
+$controller = new Controller();
+$controller->invoke();
+?>
