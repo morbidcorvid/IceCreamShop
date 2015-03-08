@@ -2,14 +2,29 @@ th {
 	background-color: #AAAAB6;
 }
 
+td {
+	text-align:center;
+}
+
+.order {
+	background-color: #EEEEF0;
+	width:50%;
+}
+
 .item {
 	background-color: #D4D4E3;
 }
 
-.extra{
-	background-color: #EEEEF0;
+.item :first-child{
+	text-align:left;
+}
+
+.scoop :first-child{
+	text-align:left;
+	padding-left: 40px;
 }
 
 .extra :first-child {
+	text-align:left;
     padding-left: 20px;
 }

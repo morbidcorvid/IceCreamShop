@@ -13,18 +13,18 @@ class Controller
 	public function invoke()
 	{
 		$extras = $this->model->getExtras();
-		$flavors = array_filter($extras,function($e){return $e->type == 'flavor';});
-		$milks= array_filter($extras,function($e){return $e->type == 'milk';});
-		$sodas = array_filter($extras,function($e){return $e->type == 'soda';});
-		$vessels = array_filter($extras,function($e){return $e->type == 'vessel';});
 		$discounts = $this->model->getDiscounts();
 		$itemTypes = $this->model->getItemTypes();
+		$itemTypeExtras = $this->model->getItemTypeExtras();
+		$extraTypes = $this->model->getExtraTypes();
 		
-		if (isset($_POST['page'])) {
-			switch ($_POST['page']) {
+		
+		
+		if (isset($_REQUEST['page'])) {
+			switch ($_REQUEST['page']) {
 				case 'process':
-					$order = $this->model->buildOrder($_POST);
-					$this->model->saveOrder($order);
+					$order = $this->model->buildOrder($_REQUEST['name'],$_REQUEST['items']);
+					//$this->model->saveOrder($order);
 					include_once 'MVC/View/process.php';
 				break;
 				
@@ -32,14 +32,22 @@ class Controller
 					$orders = $this->model->getOrders();
 					include_once 'MVC/View/history.php';
 				break;
+					
+				case 'order':
+					include_once 'MVC/View/order.php';
+				break;
+				
+				case 'manage':
+					include_once 'MVC/View/manage.php';
+				break;
 				
 				default:
-					include_once 'MVC/View/order.php';
+					include_once 'MVC/View/home.php';
 				break;
 			}
 		}
 		else{
-			include_once 'MVC/View/order.php';
+			include_once 'MVC/View/home.php';
 		}
 		
 		

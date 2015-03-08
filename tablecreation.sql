@@ -1,9 +1,28 @@
-CREATE TABLE IF NOT EXISTS extra (
+CREATE TABLE IF NOT EXISTS orders(
 	id INT NOT NULL AUTO_INCREMENT,
-	name VARCHAR(20),
-	e_type CHAR(10) NOT NULL,
+	placed TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	customer_name CHAR(50),
 	
 	PRIMARY KEY (id)
+) ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS extra_type(
+	id INT NOT NULL AUTO_INCREMENT,
+	type VARCHAR(20) NOT NULL,
+	description TEXT,
+	PRIMARY KEY (id)
+)ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS extra (
+	id INT NOT NULL AUTO_INCREMENT,
+	name VARCHAR(20) NOT NULL,
+	extra_type INT NOT NULL,
+	PRIMARY KEY (id),
+	
+	INDEX (extra_type),
+	
+	FOREIGN KEY (extra_type)
+		REFERENCES extra_type(id)
 ) ENGINE=INNODB;
 
 CREATE TABLE IF NOT EXISTS item_type(
@@ -11,49 +30,10 @@ CREATE TABLE IF NOT EXISTS item_type(
 	name VARCHAR(20),
 	price DECIMAL,
 	price_per_scoop DECIMAL,
+	has_scoops BOOLEAN,
+	description TEXT,
+	max_scoops INT,
 	PRIMARY KEY (id)
-) ENGINE=INNODB;
-
-CREATE TABLE IF NOT EXISTS item(
-	id INT NOT NULL AUTO_INCREMENT,
-	item_type INT NOT NULL,
-	PRIMARY KEY (id),
-	
-	INDEX (item_type),
-	
-	FOREIGN KEY (item_type)
-		REFERENCES	item_type(id)
-) ENGINE=INNODB;
-
-CREATE TABLE IF NOT EXISTS item_extras(
-	item INT NOT NULL,
-	extra INT NOT NULL,
-	PRIMARY KEY (item, extra),
-	
-	INDEX (item),
-	INDEX (extra),
-	
-	FOREIGN KEY (item)
-		REFERENCES item(id),
-	FOREIGN KEY (extra)
-		REFERENCES extra(id)
-) ENGINE=INNODB;
-
-CREATE TABLE IF NOT EXISTS scoop(
-	id INT NOT NULL AUTO_INCREMENT,
-	item INT NOT NULL,
-	flavor INT NOT NULL,
-	qty INT NOT NULL,
-	
-	PRIMARY KEY (id),
-	
-	INDEX (item),
-	INDEX (flavor),
-	
-	FOREIGN KEY (item)
-		REFERENCES item(id),
-	FOREIGN KEY (flavor)
-		REFERENCES extra(id)
 ) ENGINE=INNODB;
 
 CREATE TABLE IF NOT EXISTS discount(
@@ -70,18 +50,10 @@ CREATE TABLE IF NOT EXISTS discount(
 		REFERENCES item_type(id)
 ) ENGINE=INNODB;
 
-CREATE TABLE IF NOT EXISTS orders(
-	id INT NOT NULL AUTO_INCREMENT,
-	placed TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	customer_name CHAR(50),
-	
-	PRIMARY KEY (id)
-) ENGINE=INNODB;
-
-CREATE TABLE IF NOT EXISTS line_item(
+CREATE TABLE IF NOT EXISTS item(
 	id INT NOT NULL AUTO_INCREMENT,
 	order_id INT NOT NULL,
-	item INT NOT NULL,
+	item_type INT NOT NULL,
 	discount INT,
 	qty INT,
 	price DECIMAL,
@@ -89,13 +61,45 @@ CREATE TABLE IF NOT EXISTS line_item(
 	PRIMARY KEY (id),
 	
 	INDEX (order_id),
-	INDEX (item),
+	INDEX (item_type),
 	INDEX (discount),
 	
 	FOREIGN KEY (order_id)
 		REFERENCES orders(id),
-	FOREIGN KEY (item)
-		REFERENCES item(id),
+	FOREIGN KEY (item_type)
+		REFERENCES	item_type(id),
 	FOREIGN KEY (discount)
 		REFERENCES discount(id)
+) ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS item_type_extras(
+	item_type INT NOT NULL,
+	extra_type INT NOT NULL,
+	
+    PRIMARY KEY (item_type, extra_type),
+	
+	INDEX (item_type),
+	INDEX (extra_type),
+	
+	FOREIGN KEY (item_type)
+		REFERENCES item_type(id),  
+	FOREIGN KEY (extra_type)
+		REFERENCES extra_type(id)
+) ENGINE=INNODB;
+
+
+CREATE TABLE IF NOT EXISTS item_extras(
+	item INT NOT NULL,
+	extra INT NOT NULL,
+    qty INT,
+    is_scoop BOOLEAN,
+	PRIMARY KEY (item, extra),
+	
+	INDEX (item),
+	INDEX (extra),
+	
+	FOREIGN KEY (item)
+		REFERENCES item(id),
+	FOREIGN KEY (extra)
+		REFERENCES extra(id)
 ) ENGINE=INNODB;

@@ -1,111 +1,73 @@
 <?php
+class ExtraType{
+	public $id, $type, $description, $scoopable;
+	
+	function __construct($id, $type, $description, $scoopable) {
+		$this->id = $id;
+		$this->type = $type;
+		$this->description = $description;
+		$this->scoopable = $scoopable;
+	}
+}
+
 class Extra
 {
-	public $name, $type;
+	public $name, $type, $is_scoop, $qty;
 	
-	function __construct($name, $type)
+	function __construct($name, $type, $is_scoop = false, $qty = null)
 	{
 		$this->name = $name;
 		$this->type = $type;
-	}
-}
-
-class Flavor
-{
-	public $qty, $flavor;
-	
-	function __construct($qty, $flavor)
-	{
+		$this->is_scoop = $is_scoop;
 		$this->qty = $qty;
-		$this->flavor = $flavor;
-	}
-}
-
-class Cone
-{
-	public $flavors=array();
-	public $extras=array();
-	public $maxscoops = 2; 
-	public $scoopcount = 0;
-	
-	function addFlavor($qty, $flavor)
-	{
-		if ($this->scoopcount + $qty <= $this->maxscoops) {
-			array_push($this->flavors, new Flavor($qty, $flavor));
-			$this->scoopcount += $qty;
-			return true;
-		}
-		return false;
-	}
-	
-	function __construct($vessel){
-		$this->extras['vessel'] = new Extra($vessel, 'Vessel');
-	}
-}
-
-class Shake
-{
-	public $extras;
-	
-	function __construct($flavor, $milk)
-	{
-		$this->extras['flavor'] = new Extra($flavor, 'Flavor');
-		$this->extras['milk'] = new Extra($milk, 'Milk');
-	}
-}
-
-class Float
-{
-	public $flavors=array();
-	public $extras=array();
-	public $scoopcount=0;
-	
-	function addFlavor($qty, $flavor)
-	{
-		array_push($this->flavors, new Flavor($qty, $flavor));
-		$this->scoopcount += $qty;
-	}
-	
-	function __construct($soda)
-	{
-		$this->extras['soda'] = new Extra($soda, 'Soda');
-	}
-}
-
-class Item
-{
-	public $flavors=array();
-	public $extras=array();
-	public $scoopcount=0;
-	public $type;
-	
-	function addFlavor($qty, $flavor)
-	{
-		array_push($this->flavors, new Flavor($qty, $flavor));
-		$this->scoopcount += $qty;
-	}
-	
-	function addExtra($name,$type){
-		$this->extras[$type] = new Extra($name, $type);
-	}
-	
-	function __construct($type, $extras, $flavors){
-		$this->type = $type;
-		$this->extras = $extras;
-		$this->flavors = $flavors;
 	}
 }
 
 class ItemType
 {
-	public $id, $type, $price, $pricePerScoop;
-	
-	function __construct($id, $type, $price, $pricePerScoop)
+	public $id, $type, $price, $pricePerScoop, $hasScoops, $description, $max_scoops;
+	public $extraTypes;
+	function __construct($id, $type, $price, $pricePerScoop, $hasScoops, $description, $max_scoops)
 	{
 		$this->id = $id;
 		$this->type = $type;
 		$this->price = $price;
 		$this->pricePerScoop = $pricePerScoop;
+		$this->hasScoops = $hasScoops;
+		$this->description = $description;
+		$this->max_scoops = $max_scoops;
+	}
+}
+
+class Item
+{
+	public $extras=array();
+	public $scoopcount=0;
+	public $type, $qty, $discount, $price; 
+	
+	function setPrice($price, $pricePerScoop)
+	{
+		if (isset($this->scoopcount)){
+			$price += $this->scoopcount * $pricePerScoop;
+		}
+		if (!is_null($this->discount)){
+			$price -= $this->discount->amount;
+		}
+		$this->price = $price * $this->qty;
+	}
+	
+	function addExtra($name,$type, $is_scoop, $qty){
+		if ($is_scoop){
+			$this->scoopcount += $qty;
+		}
+		array_push($this->extras, new Extra($name, $type, $is_scoop, $qty));
+	}
+	
+	function __construct($type, $qty, $discount=null, $price=null){
+		$this->type = $type;
+		$this->qty = $qty;
+		$this->discount =$discount;
+		$this->price=$price;
 	}
 }
 
@@ -122,47 +84,29 @@ class Discount
 	}
 }
 
-class LineItem
-{
-	public $item, $itemType, $qty, $discount, $price;
-	
-	function setPrice()
-	{
-		$this->price = $this->itemType->price;
-		if (isset($this->item->scoopcount)){
-			$this->price += $this->item->scoopcount * $this->itemType->pricePerScoop;
-		}
-		if (!is_null($this->discount)){
-			$this->price -= $this->discount->amount;
-		}
-		$this->price = $this->price * $this->qty;
-	}
-	
-	function __construct($item, $itemType, $qty, $discount)
-	{
-		$this->item = $item;
-		$this->itemType = $itemType;
-		$this->qty = $qty;
-		$this->discount = $discount;
-		$this->setPrice();
-	}
-}
-
 class Order
 {
 	public $items = array();
-	public $total = 0, $customerName;
+	public $total = 0, $customerName, $placed;
 	
-	function addItem($item, $itemType, $qty, $discount)
-	{
-		$lineItem = new LineItem($item, $itemType, $qty, $discount);
-		$this->total += $lineItem->price;
-		array_push($this->items, $lineItem);
+	public function getTotal(){
+		//incase items added through addItem, reset total
+		$this->total = 0;
+		foreach ($this->items as $item) {
+			$this->total += $item->price;
+		}
 	}
 	
-	function __construct($customerName)
+	function addItem($item)
+	{
+		$this->total += $item->price;
+		array_push($this->items, $item);
+	}
+	
+	function __construct($customerName, $placed = null)
 	{
 		$this->customerName = $customerName;
+		$this->placed = $placed;
 	}
 	
 }
