@@ -9,7 +9,6 @@
 			  <li><a href="?page=home">Home</a></li>
 			  <li><a href="?page=order">Order</a></li>
 			  <li><a href="?page=history">History</a></li>
-			  <li><a href="?page=manage">Manage</a></li>
 			</ul>
 		</div>
 		<div id="content">

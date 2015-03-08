@@ -6,7 +6,7 @@ class Model
 	protected $connection = null;
 	public function __construct()
 	{
-		$this->connection = new PDO("mysql:host=localhost;dbname=ba_ice_cream_v2", "icecream", "ba");
+		$this->connection = new PDO("mysql:host=localhost;dbname=ba_ice_cream", "icecream", "ba");
 	}
 	private function getQuery($sql){
 		$query = $this->connection->prepare($sql);
