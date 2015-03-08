@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS extra_type(
 	id INT NOT NULL AUTO_INCREMENT,
 	type VARCHAR(20) NOT NULL,
 	description TEXT,
+	is_scoopable BOOLEAN,
 	PRIMARY KEY (id)
 )ENGINE=INNODB;
 

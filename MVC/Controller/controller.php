@@ -24,7 +24,7 @@ class Controller
 			switch ($_REQUEST['page']) {
 				case 'process':
 					$order = $this->model->buildOrder($_REQUEST['name'],$_REQUEST['items']);
-					//$this->model->saveOrder($order);
+					$this->model->saveOrder($order);
 					include_once 'MVC/View/process.php';
 				break;
 				
