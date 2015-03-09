@@ -25,9 +25,10 @@
 			if ($extraType->description != ''){
 				echo $extraType->description ."<br>";
 			}
-			echo ucwords($extraType->type) . ": <select name='items[ITEMID][extras][$rowCount][$extraType->type]'>";
+			$jsStr = "'$extraType->type'";
+			echo ucwords($extraType->type) . ': <select class="itemITEMIDtype'.$extraType->type.'" onchange="checkSelect(ITEMID,'.$jsStr.',this)"; name="items[ITEMID][extras]['.$rowCount.']['.$extraType->type.']">';
 			foreach (array_filter($extras,function($e) use ($extraType) {return $e->type == $extraType->type;}) as $extra){
-				echo "<option value='$extra->name'>$extra->name</option>";
+				echo "<option id='$extra->name' value='$extra->name'>$extra->name</option>";
 			}
 			echo "</select></td>";
 			//add scoops and buttons cells if scoopable
@@ -71,9 +72,10 @@
 	foreach ($extraTypes as $extraType){
 		if ($extraType->scoopable){
 			echo "<tr id='".$extraType->type."ScoopTemplate'><td>";
-			echo ucwords($extraType->type) . ": <select name='items[ITEMID][extras][ROWID][$extraType->type]'>";
+			$jsStr = "'$extraType->type'";
+			echo ucwords($extraType->type) . ': <select class="itemITEMIDtype'.$extraType->type.'" onchange="checkSelect(ITEMID,'.$jsStr.',this)"; name="items[ITEMID][extras]['.$rowCount.']['.$extraType->type.']">';
 			foreach (array_filter($extras,function($e) use ($extraType) {return $e->type == $extraType->type;}) as $extra){
-				echo "<option value='$extra->name'>$extra->name</option>";
+				echo "<option id='$extra->name' value='$extra->name'>$extra->name</option>";
 			}
 			echo "</select></td>";
 			//add scoops and buttons cells

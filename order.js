@@ -17,6 +17,21 @@ function addScoopable(itemId, type){
 		row.innerHTML = row.innerHTML.replace(/ROWID/g,rowCount.value);
 		var scoops = parseInt(document.getElementById(itemId+'ScoopCount').value)
 		document.getElementById(itemId+'ScoopCount').value = scoops + 1
+		var select = row.children[0].children[0];
+		var selects = document.getElementsByClassName('item'+itemId+'type'+type);
+		var selected = [];
+		for (i = 0; i < selects.length; i++){
+			selected[selected.length]=selects[i].value;
+		}
+		for (o = 0; o < select.options.length; o++){
+			if (selected.indexOf(select.options[o].value) >= 0){
+				select.options[o].disabled = true;
+			}
+			else{
+				select.options[o].selected = true;
+			}
+		}
+		
 		rowCount.value = parseInt(rowCount.value) + 1;
 	}
 }
@@ -42,6 +57,27 @@ function checkScoops(itemId,obj){
 		obj.value = parseInt(maxScoops) - (scoops - obj.defaultValue);
 		document.getElementById(itemId+'ScoopCount').value = parseInt(maxScoops);
 	}
+}
+
+function checkSelect(itemID, type, obj){
+	var val = obj.value;
+	var selects = document.getElementsByClassName('item'+itemID+'type'+type);
+	var selected = [];
+	for (i = 0; i < selects.length; i++){
+		selected[selected.length]=selects[i].value;
+	}
+
+	for (i = 0; i < selects.length; i++){		
+		for (o = 0; o < selects[i].options.length; o++){
+			if (selected.indexOf(selects[i].options[o].value) >= 0){
+				selects[i].options[o].disabled = true;
+			}
+			else{
+				selects[i].options[o].disabled = false;
+			}
+		}
+	}
+	obj.options.namedItem(val).disabled = false;
 }
 
 function addItem(type){
