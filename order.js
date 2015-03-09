@@ -17,6 +17,8 @@ function addScoopable(itemId, type){
 		row.innerHTML = row.innerHTML.replace(/ROWID/g,rowCount.value);
 		var scoops = parseInt(document.getElementById(itemId+'ScoopCount').value)
 		document.getElementById(itemId+'ScoopCount').value = scoops + 1
+		
+		//disable extras already selected
 		var select = row.children[0].children[0];
 		var selects = document.getElementsByClassName('item'+itemId+'type'+type);
 		var selected = [];
@@ -31,6 +33,17 @@ function addScoopable(itemId, type){
 				select.options[o].selected = true;
 			}
 		}
+		var selected = select.value;
+		
+		for (i = 0; i < selects.length; i++){		
+			for (o = 0; o < selects[i].options.length; o++){
+				var v = selects[i].value;
+				if (selected == selects[i].options[o].value){
+					selects[i].options[o].disabled = true;
+				}
+			}
+		}
+		select.options.namedItem(selected).disabled = false;
 		
 		rowCount.value = parseInt(rowCount.value) + 1;
 	}
@@ -69,12 +82,14 @@ function checkSelect(itemID, type, obj){
 
 	for (i = 0; i < selects.length; i++){		
 		for (o = 0; o < selects[i].options.length; o++){
+			var v = selects[i].value;
 			if (selected.indexOf(selects[i].options[o].value) >= 0){
 				selects[i].options[o].disabled = true;
 			}
 			else{
 				selects[i].options[o].disabled = false;
 			}
+			selects[i].options.namedItem(v).disabled = false;
 		}
 	}
 	obj.options.namedItem(val).disabled = false;
