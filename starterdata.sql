@@ -1,13 +1,13 @@
-INSERT INTO extra_type (id, type, description) VALUES 
-	(1, 'milk', ''),
-	(2, 'flavor', ''),
-	(3, 'soda',''),
-	(4, 'vessel', 'What would you like your ice cream served in?');
+INSERT INTO extra_type (id, type, description, is_scoopable) VALUES 
+	(1, 'milk', '', 0),
+	(2, 'flavor', '', 1),
+	(3, 'soda','', 0),
+	(4, 'vessel', 'What would you like your ice cream served in?', 0);
 
-INSERT INTO item_type (id, name, price, price_per_scoop, has_scoops, description) VALUES
-	(1, 'Cone', 4, 1, 1, 'Please choose one or two scoops for your ice cream cone. Each scoop may be any flavor.'),
-	(2, 'Shake', 5, null, 0, 'Please choose the flavor and type of milk used to make your shake.'),
-	(3, 'Float', 6, 1, 1, 'Choose a soda, and add as many flavors and scoops as you want!');
+INSERT INTO item_type (id, name, price, price_per_scoop, has_scoops, description, max_scoops) VALUES
+	(1, 'Cone', 4, 1, 1, 'Please choose one or two scoops for your ice cream cone. Each scoop may be any flavor.', 2),
+	(2, 'Shake', 5, null, 0, 'Please choose the flavor and type of milk used to make your shake.', 0),
+	(3, 'Float', 6, 1, 1, 'Choose a soda, and add as many flavors and scoops as you want!', null);
 
 INSERT INTO item_type_extras(item_type, extra_type) VALUES
 	(1, 2),
